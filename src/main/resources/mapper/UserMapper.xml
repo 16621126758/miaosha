@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 不写会报错 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.miaosha.dao.UserMapper">
+    <select id="query" resultType="com.hand.miaosha.domain.User">
+        select * from user;
+    </select>
+</mapper>
