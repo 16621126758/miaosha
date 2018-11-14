@@ -19,4 +19,8 @@ import java.util.List;
 public interface UserMapper {
    // @Select("select * from demo")
     List<User> query();
+
+    int insert(User user);
+
+
 }

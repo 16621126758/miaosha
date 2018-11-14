@@ -5,4 +5,8 @@
     <select id="query" resultType="com.hand.miaosha.domain.User">
         select * from user;
     </select>
+
+    <insert id="insert" parameterType="com.hand.miaosha.domain.User">
+        insert into User (id,name) values (#{id},#{name});
+    </insert>
 </mapper>
