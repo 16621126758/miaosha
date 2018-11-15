@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 不写会报错 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.miaosha.dao.GoodsDao">
+    <select id="listGoodsVo" resultType="com.hand.miaosha.vo.GoodsData" resultMap="GoodsMap">
+        select g.*,mg.stock_count,mg.start_date,mg.end_date,mg.miaosha_price from miaosha_goods mg left join goods g on mg.goods_id = g.id;
+    </select>
+
+    <select id="getGoodVoByGoodsId" resultType="com.hand.miaosha.vo.GoodsData" resultMap="GoodsMap">
+        select g.*,mg.stock_count,mg.start_date,mg.end_date,mg.miaosha_price from miaosha_goods mg left join goods g on mg.goods_id = g.id where g.id=#{goodsId};
+    </select>
+
+    <resultMap type="com.hand.miaosha.vo.GoodsVo" id="GoodsMap">
+        <id property="id" column="id"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="goodsTitle" column="goods_title"/>
+        <result property="goodsImg" column="goods_img"/>
+        <result property="goodsDetail" column="goods_detail"/>
+        <result property="goodsPrice" column="goods_price"/>
+        <result property="goodsStock" column="goods_stock"/>
+        <result property="stockCount" column="stock_count"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="miaoshaPrice" column="miaosha_price"/>
+    </resultMap>
+</mapper>

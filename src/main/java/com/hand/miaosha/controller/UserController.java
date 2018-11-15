@@ -1,6 +1,7 @@
 package com.hand.miaosha.controller;
 
 import com.hand.miaosha.dao.UserMapper;
+import com.hand.miaosha.domain.MiaoshaUser;
 import com.hand.miaosha.domain.User;
 import com.hand.miaosha.redis.RedisService;
 import com.hand.miaosha.redis.UserKey;
@@ -24,6 +25,7 @@ import java.util.List;
  * @Date: 2018-11-06 10:55
  */
 @Controller
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserMapper userMapper;
@@ -83,5 +85,16 @@ public class UserController {
         redisService.set(UserKey.getById,""+1,user);
         return  Result.success(true);
     }
+
+
+    //测试Jmeter
+    @RequestMapping("/info")
+    @ResponseBody
+    public Result<MiaoshaUser> info(Model model, MiaoshaUser user){
+        return Result.success(user);
+
+
+    }
+
 
 }
