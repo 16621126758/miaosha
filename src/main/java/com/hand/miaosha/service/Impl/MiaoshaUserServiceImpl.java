@@ -40,7 +40,7 @@ public class MiaoshaUserServiceImpl implements MiaoshaUserService {
     }
 
     //public CodeMsg login(LoginVo loginVo) {
-    public boolean  login(HttpServletResponse response,LoginVo loginVo) {
+    public String  login(HttpServletResponse response,LoginVo loginVo) {
         if (null==loginVo){
             System.out.println("loginvo  wei   null");
             //return CodeMsg.SERVER_ERROR;
@@ -66,7 +66,7 @@ public class MiaoshaUserServiceImpl implements MiaoshaUserService {
         //生成cookie
         String token=UUIDUtil.uuid();
         addCookie(user, token,response);
-        return true;
+        return token;
 
 
     }

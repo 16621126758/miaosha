@@ -1,10 +1,9 @@
 package com.hand.miaosha.service.Impl;
 
 import com.hand.miaosha.dao.GoodsDao;
-import com.hand.miaosha.domain.Goods;
 import com.hand.miaosha.domain.MiaoshaGoods;
 import com.hand.miaosha.service.GoodsService;
-import com.hand.miaosha.vo.GoodsData;
+
 import com.hand.miaosha.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

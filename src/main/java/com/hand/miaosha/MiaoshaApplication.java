@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 @SpringBootApplication
 @MapperScan({"com.hand.miaosha.dao","com.hand.miaosha.redis"})
 @Component("com.hand.miaosha.redis")
-public class MiaoshaApplication extends SpringBootServletInitializer {
+public class MiaoshaApplication //extends SpringBootServletInitializer
+{
 
 
     public static void main(String[] args) {
@@ -19,8 +20,8 @@ public class MiaoshaApplication extends SpringBootServletInitializer {
     }
 
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return super.configure(builder);
-    }
+//    @Override
+//    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+//        return super.configure(builder);
+//    }
 }

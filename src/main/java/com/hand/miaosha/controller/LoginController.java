@@ -38,7 +38,7 @@ public class LoginController {
 
     @RequestMapping("/do_login")
     @ResponseBody
-    public Result<Boolean> doLogin(HttpServletResponse response, @Valid LoginVo loginVo){
+    public Result<String> doLogin(HttpServletResponse response, @Valid LoginVo loginVo){
         log.info(loginVo.toString());
         //参数校验
 //        String passinput = loginVo.getPassword();
@@ -50,7 +50,7 @@ public class LoginController {
 //            return  Result.error(CodeMsg.MOBILE_EMPTU);
 //        }
         //登陆
-         miaoshaUserService.login(response,loginVo);
+         String token = miaoshaUserService.login(response,loginVo);
        // System.out.println("返回的code为++++++++++++++++++"+mg.getCode());
 //        if (mg.getCode()==0){
 //           return Result.success(CodeMsg.SUCCESS);
@@ -58,6 +58,6 @@ public class LoginController {
 //            return Result.error(mg);
 //        }
        //return null;
-        return Result.success(true);
+        return Result.success(token);
     }
 }
