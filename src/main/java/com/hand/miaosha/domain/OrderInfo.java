@@ -12,6 +12,24 @@ public class OrderInfo {
 	private Double goodsPrice;
 	private Integer orderChannel;
 	private Integer status;
+
+	@Override
+	public String toString() {
+		return "OrderInfo{" +
+				"id=" + id +
+				", userId=" + userId +
+				", goodsId=" + goodsId +
+				", deliveryAddrId=" + deliveryAddrId +
+				", goodsName='" + goodsName + '\'' +
+				", goodsCount=" + goodsCount +
+				", goodsPrice=" + goodsPrice +
+				", orderChannel=" + orderChannel +
+				", status=" + status +
+				", createDate=" + createDate +
+				", payDate=" + payDate +
+				'}';
+	}
+
 	private Date createDate;
 	private Date payDate;
 	public Long getId() {

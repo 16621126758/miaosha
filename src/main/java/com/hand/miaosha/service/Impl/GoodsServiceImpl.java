@@ -1,6 +1,8 @@
 package com.hand.miaosha.service.Impl;
 
 import com.hand.miaosha.dao.GoodsDao;
+import com.hand.miaosha.domain.Goods;
+import com.hand.miaosha.domain.MiaoshaGoods;
 import com.hand.miaosha.service.GoodsService;
 import com.hand.miaosha.vo.GoodsData;
 import com.hand.miaosha.vo.GoodsVo;
@@ -20,6 +22,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
     private GoodsDao goodsDao;
+
     @Override
     public List<GoodsVo> listGoodsVo() {
         List<GoodsVo>list = goodsDao.listGoodsVo();
@@ -30,5 +33,12 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public GoodsVo getGoodsVoByGoodsId(long goodsId) {
         return goodsDao.getGoodVoByGoodsId(goodsId);
+    }
+
+    @Override
+    public void reduceStock(GoodsVo goods) {
+        MiaoshaGoods g = new MiaoshaGoods();
+        g.setGoodsId(goods.getId());
+        goodsDao.reduceStock(g);
     }
 }

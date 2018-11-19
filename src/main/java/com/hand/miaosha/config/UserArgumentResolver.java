@@ -40,7 +40,6 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
         HttpServletRequest resquest = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
-        System.out.println("进入到listcontrollerZH欧冠你 士大夫大师傅但是都是");
         String paramToken = resquest.getParameter(MiaoshaUserServiceImpl.COOKIE_NAME_TOKEN);
         String cookieToken = getCookieValue(resquest,MiaoshaUserServiceImpl.COOKIE_NAME_TOKEN);
         if (StringUtils.isEmpty(cookieToken)&&StringUtils.isEmpty(paramToken)){
@@ -59,7 +58,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     }
     private String getCookieValue(HttpServletRequest request,String cookieName){
         Cookie[] cookies= request.getCookies();
-        if (cookies == null&&cookies.length==0){
+        if (null == cookies||cookies.length<=0){
             return null;
         }
        for (Cookie cookie:cookies){

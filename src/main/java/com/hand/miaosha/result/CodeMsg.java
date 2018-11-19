@@ -11,6 +11,15 @@ import org.apache.ibatis.ognl.OgnlRuntime;
 public class CodeMsg {
 
     private int code;
+
+    @Override
+    public String toString() {
+        return "CodeMsg{" +
+                "code=" + code +
+                ", msg='" + msg + '\'' +
+                '}';
+    }
+
     private String msg;
 
     //通用的异常
@@ -32,6 +41,9 @@ public class CodeMsg {
     //订单模块5004xx
 
     //秒杀模块5005xx
+    public static CodeMsg MIAO_SHA_OVER = new CodeMsg(500500,"商品已经秒杀完毕");
+    public static CodeMsg REPEATE_MIAOSHA = new CodeMsg(500500,"不能重复秒杀");
+
 
     public CodeMsg(int code, String msg) {
         this.code = code;

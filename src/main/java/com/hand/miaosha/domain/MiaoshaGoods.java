@@ -15,9 +15,11 @@ public class MiaoshaGoods {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public Long getGoodsId() {
 		return goodsId;
 	}
+
 	public void setGoodsId(Long goodsId) {
 		this.goodsId = goodsId;
 	}

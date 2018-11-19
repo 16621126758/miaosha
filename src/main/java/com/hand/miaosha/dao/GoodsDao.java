@@ -1,5 +1,7 @@
 package com.hand.miaosha.dao;
 
+import com.hand.miaosha.domain.Goods;
+import com.hand.miaosha.domain.MiaoshaGoods;
 import com.hand.miaosha.vo.GoodsData;
 import com.hand.miaosha.vo.GoodsVo;
 import org.apache.ibatis.annotations.Param;
@@ -16,4 +18,6 @@ public interface GoodsDao {
     List<GoodsVo> listGoodsVo();
 
     GoodsVo getGoodVoByGoodsId(long goodsId);
+
+    int reduceStock(MiaoshaGoods g);
 }

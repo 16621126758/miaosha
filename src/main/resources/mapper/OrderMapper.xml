@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 不写会报错 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.miaosha.dao.OrderDao">
+    <select id="getMiaoshaOrderByUserIdGoodsId" resultType="com.hand.miaosha.domain.MiaoshaOrder">
+        select * from miaosha_order where user_id= #{userId} and goods_id = #{goodsId};
+    </select>
+
+    <resultMap id="MiaoshaOrderMap" type="com.hand.miaosha.domain.MiaoshaOrder">
+        <id property="id" column="id"/>
+        <result  property="userId" column="user_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="goodsId" column="goods_id"/>
+    </resultMap>
+
+    <!--<insert id="insert" parameterType="com.hand.miaosha.domain.OrderInfo">-->
+        <!--insert into order_info(user_id,goods_id,goods_name,goods_count,goods_price,goods_channel,status,create_date)-->
+         <!--values (#{userId},#{goodsId},#{goodsName},#{goodsCount},#{goodsPrice},#{goodsChannel},#{status},#{createDate});-->
+    <!--</insert>-->
+
+
+    <insert id="insertMiaoshaOrder" parameterType="com.hand.miaosha.domain.MiaoshaOrder">
+        insert into miaosha_order(user_id,goods_id,order_id) values (#{userId},#{goodsId},#{orderId});
+    </insert>
+</mapper>

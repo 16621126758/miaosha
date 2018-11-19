@@ -16,4 +16,6 @@ public interface GoodsService {
     List<GoodsVo> listGoodsVo();
 
     GoodsVo getGoodsVoByGoodsId(long goodsId);
+
+    void reduceStock(GoodsVo goods);
 }
