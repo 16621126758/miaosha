@@ -16,4 +16,5 @@ public interface MiaoshaUserDao {
 
      MiaoshaUser getById(@Param("id") long id);
 
+    void update(MiaoshaUser toBeUpdate);
 }

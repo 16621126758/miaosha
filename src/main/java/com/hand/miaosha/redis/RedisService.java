@@ -26,6 +26,26 @@ public class RedisService {
     JedisPool jedisPool;
 
     /**
+     *
+     * @param keyprefix
+     * @param key
+     * @param <删除
+     * @return
+     */
+    public boolean delete(KeyPrefix keyprefix,String key){
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            //生成真正的key
+            String realKey = keyprefix.getPrefix()+key;
+            long ret =  jedis.del(realKey);
+            return ret>0;
+        }finally {
+            returnToPoll(jedis);
+        }
+    }
+
+    /**
      * 获取单个对象
      * @param keyprefix
      * @param key

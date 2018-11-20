@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.UnknownFormatConversionException;
 
 /**
  * @Class: MiaoshaUserService
@@ -36,7 +37,38 @@ public class MiaoshaUserServiceImpl implements MiaoshaUserService {
 
     public MiaoshaUser getById(long id){
         System.out.println("在service中执行getById方法--------------------------");
-        return miaoshaUserDao.getById(id);
+        //取缓存
+        MiaoshaUser miaoshaUser = redisService.get(MiaoshaUserKey.getById,""+id,MiaoshaUser.class);
+        if (miaoshaUser!=null){
+            return miaoshaUser;
+        }
+
+        //取数据库
+        miaoshaUser = miaoshaUserDao.getById(id);
+        redisService.set(MiaoshaUserKey.getById,""+id,miaoshaUser);
+        return miaoshaUser;
+    }
+
+    public boolean updatePassword(String token,long id,String formPass){
+        //取user
+        MiaoshaUser miaoshauser = getById(id);
+        if (null==miaoshauser){
+            throw new GlobalException(CodeMsg.NOT_EXIST);
+        }
+        //更新数据库
+        MiaoshaUser toBeUpdate = new MiaoshaUser();
+        toBeUpdate.setId(id);
+        toBeUpdate.setPassword(MD5Util.formPassToDbPass(formPass,miaoshauser.getSalt()));
+        miaoshaUserDao.update(toBeUpdate);
+        //清理缓存
+        redisService.delete(MiaoshaUserKey.getById,""+id);
+        miaoshauser.setPassword(toBeUpdate.getPassword());
+        redisService.set(MiaoshaUserKey.token,token,miaoshauser);
+
+        return true;
+
+
+
     }
 
     //public CodeMsg login(LoginVo loginVo) {

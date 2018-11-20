@@ -2,6 +2,8 @@ package com.hand.miaosha.controller;
 
 import com.hand.miaosha.domain.MiaoshaUser;
 import com.hand.miaosha.domain.User;
+import com.hand.miaosha.redis.GoodsKey;
+import com.hand.miaosha.redis.RedisService;
 import com.hand.miaosha.service.GoodsService;
 import com.hand.miaosha.service.Impl.MiaoshaUserServiceImpl;
 
@@ -11,24 +13,29 @@ import com.hand.miaosha.vo.GoodsVo;
 import io.lettuce.core.ScriptOutputType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.context.IContext;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.spring5.context.webflux.SpringWebFluxContext;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
 import java.util.List;
 
 /**
  * @Class: GoodsController
- * @description:
+ * @description:进行了优化
  * @Author: hongzhi.zhao
  * @Date: 2018-11-13 17:22
  */
 @Controller
-@RequestMapping("/goods/")
+@RequestMapping("/goods")
 public class GoodsController {
     @Autowired
     private MiaoshaUserService userService;
@@ -36,9 +43,19 @@ public class GoodsController {
     @Autowired
     private GoodsService goodsService;
 
-    @RequestMapping("/to_list")
-    public String toList(
-            //HttpServletResponse response,
+    @Autowired
+    private RedisService redisService;
+
+    //springboot自己带的，渲染页面用的
+    @Autowired
+    ThymeleafViewResolver thymeleafViewResolver;
+
+    @Autowired
+    ApplicationContext applicationContext;
+
+    @RequestMapping(value = "/to_list",produces = "text/html")
+    @ResponseBody
+    public String toList(HttpServletResponse response,HttpServletRequest request,
             Model model,
 //            , @CookieValue(value = MiaoshaUserServiceImpl.COOKIE_NAME_TOKEN ,required = false) String cookieToken,
 //                          //下面的是为了兼容把cookie直接放在参数中的情况
@@ -54,21 +71,46 @@ public class GoodsController {
 //        System.out.println(cookieToken);
         model.addAttribute("user",user);
        //model.addAttribute("user",new MiaoshaUser());
-
+        //取页面缓存
+        String html = redisService.get(GoodsKey.getGoodsList,"",String.class);
+        if (StringUtils.isNotEmpty(html)){
+            return html;
+        }
         //查询商品列表
         List<GoodsVo> goodsList = goodsService.listGoodsVo();
         System.out.println(goodsList.get(0));
         model.addAttribute("goodsList",goodsList);
-        return "goods_list";
-    }
+       // return "goods_list";
 
-    @RequestMapping("/to_detail/{goodsId}")
-    public String detail(Model model, MiaoshaUser user, @PathVariable("goodsId") long goodsId ){
+       //手动渲染页面
+        //springboot1.x 可以用
+//        SpringWebContext springWebContext = new SpringWebContext(request,response,request.getServletContext(),
+//                request.getLocale(),model.asMap());
+        //springboot 1.x以后
+        WebContext context = new WebContext(request,response,request.getServletContext(),
+                request.getLocale(),model.asMap());
+        html = thymeleafViewResolver.getTemplateEngine().process("goods_list",context);
+        if (StringUtils.isNotEmpty(html)){
+            redisService.set(GoodsKey.getGoodsList,"",html);
+        }
+        return html;
+     }
+
+    @RequestMapping(value = "/to_detail/{goodsId}",produces = "text/html")
+    @ResponseBody
+    public String detail(HttpServletResponse response,HttpServletRequest request,
+                         Model model, MiaoshaUser user, @PathVariable("goodsId") long goodsId ){
         System.out.println("进入 详情页----------------");
         System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+goodsId);
 
         model.addAttribute("user",user);
         //snowflake算法   一般id不用自增
+
+        //取页面缓存
+        String html = redisService.get(GoodsKey.getGoodsDetail,""+goodsId,String.class);
+        if (StringUtils.isNotEmpty(html)){
+            return html;
+        }
       GoodsVo goods =  goodsService.getGoodsVoByGoodsId(goodsId);
        model.addAttribute("goods",goods);
 
@@ -92,8 +134,13 @@ public class GoodsController {
 
        model.addAttribute("miaoshaStatus",miaoshaStatus);
        model.addAttribute("remainSeconds",remainSeconds);
-       return "goods_detail";
-
-
+       //return "goods_detail";
+        WebContext context = new WebContext(request,response,request.getServletContext(),
+                request.getLocale(),model.asMap());
+        html = thymeleafViewResolver.getTemplateEngine().process("goods_detail",context);
+        if (StringUtils.isNotEmpty(html)){
+            redisService.set(GoodsKey.getGoodsDetail,""+goodsId,html);
+        }
+        return html;
     }
 }
