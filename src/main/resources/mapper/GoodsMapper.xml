@@ -14,6 +14,7 @@
         update miaosha_goods set stock_count =stock_count-1 where goods_id = #{goodsId}
     </update>
 
+
     <resultMap type="com.hand.miaosha.vo.GoodsVo" id="GoodsMap">
         <id property="id" column="id"/>
         <result property="goodsName" column="goods_name"/>

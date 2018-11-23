@@ -2,10 +2,7 @@ package com.hand.miaosha.dao;
 
 import com.hand.miaosha.domain.MiaoshaOrder;
 import com.hand.miaosha.domain.OrderInfo;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectKey;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,4 +23,12 @@ public interface OrderDao {
     int insertMiaoshaOrder(MiaoshaOrder miaoshaOrder);
 
 
+    OrderInfo getOrderById(long orderId);
+
+
+    @Delete("delete from order_info")
+    public void deleteOrders();
+
+    @Delete("delete from miaosha_order")
+    public void deleteMiaoshaOrders();
 }

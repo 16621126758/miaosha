@@ -4,11 +4,13 @@ import com.hand.miaosha.domain.MiaoshaUser;
 import com.hand.miaosha.domain.User;
 import com.hand.miaosha.redis.GoodsKey;
 import com.hand.miaosha.redis.RedisService;
+import com.hand.miaosha.result.Result;
 import com.hand.miaosha.service.GoodsService;
 import com.hand.miaosha.service.Impl.MiaoshaUserServiceImpl;
 
 import com.hand.miaosha.service.MiaoshaUserService;
 import com.hand.miaosha.vo.GoodsData;
+import com.hand.miaosha.vo.GoodsDetailVo;
 import com.hand.miaosha.vo.GoodsVo;
 import io.lettuce.core.ScriptOutputType;
 import org.apache.commons.lang3.StringUtils;
@@ -96,26 +98,16 @@ public class GoodsController {
         return html;
      }
 
-    @RequestMapping(value = "/to_detail/{goodsId}",produces = "text/html")
+    @RequestMapping(value = "/detail/{goodsId}")
     @ResponseBody
-    public String detail(HttpServletResponse response,HttpServletRequest request,
-                         Model model, MiaoshaUser user, @PathVariable("goodsId") long goodsId ){
-        System.out.println("进入 详情页----------------");
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+goodsId);
+    public Result<GoodsDetailVo> detail(HttpServletResponse response, HttpServletRequest request,
+                                         Model model, MiaoshaUser user, @PathVariable("goodsId") long goodsId ){
 
-        model.addAttribute("user",user);
-        //snowflake算法   一般id不用自增
+      GoodsVo goodsVo =  goodsService.getGoodsVoByGoodsId(goodsId);
 
-        //取页面缓存
-        String html = redisService.get(GoodsKey.getGoodsDetail,""+goodsId,String.class);
-        if (StringUtils.isNotEmpty(html)){
-            return html;
-        }
-      GoodsVo goods =  goodsService.getGoodsVoByGoodsId(goodsId);
-       model.addAttribute("goods",goods);
 
-       long startAt = goods.getStartDate().getTime();
-       long endAt = goods.getEndDate().getTime();
+       long startAt = goodsVo.getStartDate().getTime();
+       long endAt = goodsVo.getEndDate().getTime();
        long now = System.currentTimeMillis();
        int miaoshaStatus = 0;
        int remainSeconds = 0;
@@ -131,10 +123,54 @@ public class GoodsController {
            miaoshaStatus = 1;
            remainSeconds = 0;
            }
+        GoodsDetailVo goodsDetailVo = new GoodsDetailVo();
+       goodsDetailVo.setMiaoshaUser(user);
+       goodsDetailVo.setGoods(goodsVo);
+       goodsDetailVo.setMiaoshaStatus(miaoshaStatus);
+       goodsDetailVo.setRemainSeconds(remainSeconds);
 
-       model.addAttribute("miaoshaStatus",miaoshaStatus);
-       model.addAttribute("remainSeconds",remainSeconds);
-       //return "goods_detail";
+        return Result.success(goodsDetailVo);
+    }
+
+    @RequestMapping(value = "/to_detail2/{goodsId}",produces = "text/html")
+    @ResponseBody
+    public String detail2(HttpServletResponse response,HttpServletRequest request,
+                          Model model, MiaoshaUser user, @PathVariable("goodsId") long goodsId ){
+        System.out.println("进入 详情页----------------");
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+goodsId);
+
+        model.addAttribute("user",user);
+        //snowflake算法   一般id不用自增
+
+        //取页面缓存
+        String html = redisService.get(GoodsKey.getGoodsDetail,""+goodsId,String.class);
+        if (StringUtils.isNotEmpty(html)){
+            return html;
+        }
+        GoodsVo goods =  goodsService.getGoodsVoByGoodsId(goodsId);
+        model.addAttribute("goods",goods);
+
+        long startAt = goods.getStartDate().getTime();
+        long endAt = goods.getEndDate().getTime();
+        long now = System.currentTimeMillis();
+        int miaoshaStatus = 0;
+        int remainSeconds = 0;
+
+        if (now<startAt){    //秒杀还没有开始，倒计时
+            miaoshaStatus = 0;
+            remainSeconds = (int)((startAt-now)/1000);
+        } else if (endAt<now){//秒杀已经结束
+            miaoshaStatus = 2;
+            remainSeconds = -1;
+        }
+        else { //秒杀进行中
+            miaoshaStatus = 1;
+            remainSeconds = 0;
+        }
+
+        model.addAttribute("miaoshaStatus",miaoshaStatus);
+        model.addAttribute("remainSeconds",remainSeconds);
+        //return "goods_detail";
         WebContext context = new WebContext(request,response,request.getServletContext(),
                 request.getLocale(),model.asMap());
         html = thymeleafViewResolver.getTemplateEngine().process("goods_detail",context);

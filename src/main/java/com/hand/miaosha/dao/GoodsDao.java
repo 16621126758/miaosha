@@ -5,6 +5,7 @@ import com.hand.miaosha.domain.MiaoshaGoods;
 import com.hand.miaosha.vo.GoodsData;
 import com.hand.miaosha.vo.GoodsVo;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -20,4 +21,8 @@ public interface GoodsDao {
     GoodsVo getGoodVoByGoodsId(long goodsId);
 
     int reduceStock(MiaoshaGoods g);
+
+    @Update("update miaosha_goods set stock_count = #{stockCount} where goods_id = #{goodsId}")
+    public int resetStock(MiaoshaGoods g);
+
 }

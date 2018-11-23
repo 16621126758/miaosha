@@ -22,4 +22,22 @@
     <insert id="insertMiaoshaOrder" parameterType="com.hand.miaosha.domain.MiaoshaOrder">
         insert into miaosha_order(user_id,goods_id,order_id) values (#{userId},#{goodsId},#{orderId});
     </insert>
+
+    <select id="getOrderById" parameterType="java.lang.Long"  resultMap="orderInfomap">
+        select * from order_info where id = #{orderId}
+    </select>
+
+    <resultMap id="orderInfomap" type="com.hand.miaosha.domain.OrderInfo">
+        <id property="id" column="id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="userId" column="user_id"/>
+        <result property="goodsPrice" column="goods_price"/>
+        <result property="createDate" column="create_date"/>
+        <result property="deliveryAddrId" column="delivery_addr_id"/>
+        <result property="goodsCount" column="goods_count"/>
+        <result property="orderChannel" column="order_channel"/>
+        <result property="payDate" column="pay_date"/>
+        <result property="status" column="status"/>
+    </resultMap>
 </mapper>
