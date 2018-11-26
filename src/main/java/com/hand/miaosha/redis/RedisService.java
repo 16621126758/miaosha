@@ -122,7 +122,7 @@ public class RedisService {
             //生成真正的key
             String realKey = keyprefix.getPrefix()+key;
             String str = jedis.get(realKey);
-            T t = StringToBean(str,clazz);
+            T t = stringToBean(str,clazz);
             return t;
         }finally {
             returnToPoll(jedis);
@@ -234,23 +234,28 @@ public class RedisService {
         }
     }
 
-    public static<T> T StringToBean(String str,Class<T> clazz) {
-        if (StringUtils.isEmpty("str")||null==clazz){
+    @SuppressWarnings("unchecked")
+    public static <T> T stringToBean(String str, Class<T> clazz) {
+        if(str == null || str.length() <= 0 || clazz == null) {
             return null;
         }
-        if (clazz == int.class||clazz == Integer.class){
+        if(clazz == int.class || clazz == Integer.class) {
             return (T)Integer.valueOf(str);
-        } else if (clazz == String.class){
+        }else if(clazz == String.class) {
             return (T)str;
-        } else if (clazz == long.class||clazz == Long.class){
-            return (T)Long.valueOf(str);
+        }else if(clazz == long.class || clazz == Long.class) {
+            return  (T)Long.valueOf(str);
         }else {
-            return JSON.toJavaObject(JSON.parseObject(str),clazz);
+            return JSON.toJavaObject(JSON.parseObject(str), clazz);
         }
-
-
-
     }
+
+    private void returnToPool(Jedis jedis) {
+        if(jedis != null) {
+            jedis.close();
+        }
+    }
+
 
     private void returnToPoll(Jedis jedis) {
         if (jedis!=null){

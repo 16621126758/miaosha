@@ -4,10 +4,7 @@ import com.hand.miaosha.domain.MiaoshaOrder;
 import com.hand.miaosha.domain.MiaoshaUser;
 import com.hand.miaosha.rabbitmq.MQSender;
 import com.hand.miaosha.rabbitmq.MiaoshaMessage;
-import com.hand.miaosha.redis.GoodsKey;
-import com.hand.miaosha.redis.MiaoshaKey;
-import com.hand.miaosha.redis.OrderKey;
-import com.hand.miaosha.redis.RedisService;
+import com.hand.miaosha.redis.*;
 import com.hand.miaosha.result.CodeMsg;
 import com.hand.miaosha.result.Result;
 import com.hand.miaosha.service.GoodsService;
@@ -23,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -30,6 +28,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @Class: MiaoshaController
@@ -204,13 +203,25 @@ public class MiaoshaController implements InitializingBean {
     }
     @RequestMapping(value = "/getMiaoshPath",method = RequestMethod.GET)
     @ResponseBody
-    public Result<String> getMiaoshPath(Model model, MiaoshaUser user, @RequestParam("goodsId") long goodsId,@RequestParam("verifyCode")int verifyCode) {
-        System.out.println("开始秒杀-------------------");
-        model.addAttribute("user", user);
+    public Result<String> getMiaoshPath(HttpServletRequest request, MiaoshaUser user,
+                                        @RequestParam("goodsId") long goodsId,
+                                        @RequestParam(value = "verifyCode",defaultValue = "0")int verifyCode) {
         if (user == null) {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
-        //
+        //查询访问的次数
+        String url = request.getRequestURI();
+        String key = url+"_"+user.getId();
+        System.out.println("获得的访问次数为=============");
+       // Integer count = redisService.get(AccessKey.access,key,Integer.class);
+        if (null==redisService.get(AccessKey.access,key,Integer.class)){
+            redisService.set(AccessKey.access,key,1);
+        }else if (redisService.get(AccessKey.access,key,Integer.class) <5){
+            redisService.incr(AccessKey.access,key);
+        }else{
+            return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
+        }
+
         boolean check = miaoshaService.checkVerifyCode(user,goodsId,verifyCode);
         if (!check){
             return Result.error(CodeMsg.REQUEST_ILLEGAL);

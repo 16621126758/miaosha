@@ -58,8 +58,6 @@ public class MQReceiver {
 
    // @RabbitListener(queues = MQConfig.TOPIC_QUEUE2)
     //public void receiverTopic2(String message){
-       // LOG.info(" topic queue2 message : "+message);
-    //}
 
     /**
      * Header模式  交换机Exchange
@@ -67,7 +65,7 @@ public class MQReceiver {
 
     //@RabbitListener(queues = MQConfig.HEADERS_QUEUE)
     //public void receiverRabbit(byte[] message){
-      //  LOG.info("headers queue message"+new String(message));
+    //  LOG.info("headers queue message"+new String(message));
 
     //}
 
@@ -75,11 +73,11 @@ public class MQReceiver {
     @RabbitListener(queues = MQConfig.MIAOSHA_QUEUE)
     public void receiver(String message){
         LOG.info("receiver  message :"+message);
-        MiaoshaMessage mm = RedisService.StringToBean(message,MiaoshaMessage.class);
+        MiaoshaMessage mm = RedisService.stringToBean(message,MiaoshaMessage.class);
         MiaoshaUser user = mm.getMiaoshaUser();
         long goodsId = mm.getGoodsId();
         //判断库存
-           GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
+        GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
         int stock = goods.getStockCount();
         if (stock<=0){
             //model.addAttribute("errmsg",CodeMsg.MIAO_SHA_OVER);
@@ -94,4 +92,6 @@ public class MQReceiver {
         miaoshaService.miaosha(user,goods);
 
     }
+    // LOG.info(" topic queue2 message : "+message);
+    //}
 }

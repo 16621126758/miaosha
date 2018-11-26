@@ -10,11 +10,9 @@ import com.hand.miaosha.service.OrderService;
 import com.hand.miaosha.util.MD5Util;
 import com.hand.miaosha.util.UUIDUtil;
 import com.hand.miaosha.vo.GoodsVo;
-import io.lettuce.core.models.role.RedisSentinelInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.awt.*;
