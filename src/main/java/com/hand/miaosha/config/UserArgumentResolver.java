@@ -1,5 +1,6 @@
 package com.hand.miaosha.config;
 
+import com.hand.miaosha.access.UserContext;
 import com.hand.miaosha.domain.MiaoshaUser;
 import com.hand.miaosha.service.Impl.MiaoshaUserServiceImpl;
 import com.hand.miaosha.service.MiaoshaUserService;
@@ -38,15 +39,16 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
-        HttpServletRequest resquest = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
-        HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
-        String paramToken = resquest.getParameter(MiaoshaUserServiceImpl.COOKIE_NAME_TOKEN);
-        String cookieToken = getCookieValue(resquest,MiaoshaUserServiceImpl.COOKIE_NAME_TOKEN);
-        if (StringUtils.isEmpty(cookieToken)&&StringUtils.isEmpty(paramToken)){
-            return null;
-        }
-        String token = StringUtils.isEmpty(paramToken)?cookieToken:paramToken;
-        return miaoshaUserService.getByToken(response,token);
+//        HttpServletRequest resquest = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
+//        HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
+//        String paramToken = resquest.getParameter(MiaoshaUserServiceImpl.COOKIE_NAME_TOKEN);
+//        String cookieToken = getCookieValue(resquest,MiaoshaUserServiceImpl.COOKIE_NAME_TOKEN);
+//        if (StringUtils.isEmpty(cookieToken)&&StringUtils.isEmpty(paramToken)){
+//            return null;
+//        }
+//        String token = StringUtils.isEmpty(paramToken)?cookieToken:paramToken;
+//        return miaoshaUserService.getByToken(response,token);
+        return UserContext.getUser();
 
 //        if (StringUtils.isEmpty(cookieToken)&&StringUtils.isEmpty(paramToken)){
 //            return "login";
@@ -56,16 +58,16 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 //        System.out.println(cookieToken);
 
     }
-    private String getCookieValue(HttpServletRequest request,String cookieName){
-        Cookie[] cookies= request.getCookies();
-        if (null == cookies||cookies.length<=0){
-            return null;
-        }
-       for (Cookie cookie:cookies){
-           if (cookie.getName().equals(cookieName)){
-               return cookie.getValue();
-           }
-       }
-       return null;
-    }
+//    private String getCookieValue(HttpServletRequest request,String cookieName){
+//        Cookie[] cookies= request.getCookies();
+//        if (null == cookies||cookies.length<=0){
+//            return null;
+//        }
+//       for (Cookie cookie:cookies){
+//           if (cookie.getName().equals(cookieName)){
+//               return cookie.getValue();
+//           }
+//       }
+//       return null;
+    //}
 }

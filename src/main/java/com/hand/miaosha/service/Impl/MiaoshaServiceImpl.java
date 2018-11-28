@@ -49,7 +49,6 @@ public class MiaoshaServiceImpl implements MiaoshaService {
            setGoodsOver(goods.getId());
             return null;
         }
-
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.hand.miaosha.controller;
 
+import com.hand.miaosha.access.AccessLimit;
 import com.hand.miaosha.domain.MiaoshaOrder;
 import com.hand.miaosha.domain.MiaoshaUser;
 import com.hand.miaosha.rabbitmq.MQSender;
@@ -10,15 +11,14 @@ import com.hand.miaosha.result.Result;
 import com.hand.miaosha.service.GoodsService;
 import com.hand.miaosha.service.MiaoshaService;
 import com.hand.miaosha.service.OrderService;
-import com.hand.miaosha.util.MD5Util;
-import com.hand.miaosha.util.UUIDUtil;
 import com.hand.miaosha.vo.GoodsVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +28,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @Class: MiaoshaController
@@ -55,6 +54,7 @@ public class MiaoshaController implements InitializingBean {
     private MQSender mqSender;
 
     private Map<Long,Boolean> localOverMap = new HashMap <Long,Boolean>();
+    public static final Logger log = LoggerFactory.getLogger(MiaoshaController.class);
 
     /**
      * 系统初始化用的
@@ -137,7 +137,7 @@ public class MiaoshaController implements InitializingBean {
     @ResponseBody
     public Result<Integer> list(Model model, MiaoshaUser user, @RequestParam("goodsId") long goodsId,
                                 @PathVariable("path") String path){
-        System.out.println("开始秒杀-------------------");
+        log.info("开始秒杀-------------------");
         model.addAttribute("user",user);
         if (user == null){
             return Result.error(CodeMsg.SESSION_ERROR);
@@ -160,8 +160,7 @@ public class MiaoshaController implements InitializingBean {
         }
         //判断是否已经秒杀过了
         MiaoshaOrder miaoshaOrder =  orderService.getMiaoshaOrderByUserIdGoodsId(user.getId(),goodsId);
-        System.out.println("判断秒杀");
-        System.out.println("miaoshaorder=============="+miaoshaOrder);
+        log.info("判断秒杀");
         if (null!=miaoshaOrder){
             return Result.error(CodeMsg.REPEATE_MIAOSHA);
 
@@ -201,6 +200,8 @@ public class MiaoshaController implements InitializingBean {
              }*/
 
     }
+
+    @AccessLimit(seconds = 5,maxCount = 5,needLogin = true)
     @RequestMapping(value = "/getMiaoshPath",method = RequestMethod.GET)
     @ResponseBody
     public Result<String> getMiaoshPath(HttpServletRequest request, MiaoshaUser user,
@@ -212,16 +213,6 @@ public class MiaoshaController implements InitializingBean {
         //查询访问的次数
         String url = request.getRequestURI();
         String key = url+"_"+user.getId();
-        System.out.println("获得的访问次数为=============");
-       // Integer count = redisService.get(AccessKey.access,key,Integer.class);
-        if (null==redisService.get(AccessKey.access,key,Integer.class)){
-            redisService.set(AccessKey.access,key,1);
-        }else if (redisService.get(AccessKey.access,key,Integer.class) <5){
-            redisService.incr(AccessKey.access,key);
-        }else{
-            return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
-        }
-
         boolean check = miaoshaService.checkVerifyCode(user,goodsId,verifyCode);
         if (!check){
             return Result.error(CodeMsg.REQUEST_ILLEGAL);
