@@ -30,10 +30,11 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
     private MiaoshaUserService miaoshaUserService;
     @Override
+    //获取的参数的类型
     public boolean supportsParameter(MethodParameter methodParameter) {
         //获取参数的类型
         Class<?> clazz =  methodParameter.getParameterType();
-        //如果遇到的类型是MiaoshaUser的就会执行下面的方法
+        //如果遇到的类型是MiaoshaUser的就会执行下面的方法，如果类型是MiaoshaUser的才会执行下面的方法
         return clazz == MiaoshaUser.class;
     }
 

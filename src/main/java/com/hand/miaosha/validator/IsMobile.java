@@ -12,6 +12,7 @@ import java.lang.annotation.*;
  * @Date: 2018-11-13 14:30
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
+
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(
@@ -20,7 +21,6 @@ import java.lang.annotation.*;
 public @interface IsMobile {
 
     //默认必须有
-
     boolean required() default  true;
 
     String message() default "{手机号码格式有误}";

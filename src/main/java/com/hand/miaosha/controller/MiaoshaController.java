@@ -153,7 +153,8 @@ public class MiaoshaController implements InitializingBean {
             return Result.error(CodeMsg.MIAO_SHA_OVER);
         }
         //预减库存
-        long stock = redisService.decr(GoodsKey.getMiaoshaGoodsStock,""+goodsId);
+
+        Long stock = redisService.get(GoodsKey.getMiaoshaGoodsStock,""+goodsId,Long.class);
         if (stock < 0){
             localOverMap.put(goodsId,true);
             return Result.error(CodeMsg.MIAO_SHA_OVER);
@@ -167,6 +168,7 @@ public class MiaoshaController implements InitializingBean {
 //               model.addAttribute("errmsg",CodeMsg.REPEATE_MIAOSHA);
 //               return "miaosha_fail";
         }
+        long stock1 = redisService.decr(GoodsKey.getMiaoshaGoodsStock,""+goodsId);
         //入队
         MiaoshaMessage mm = new MiaoshaMessage();
         mm.setMiaoshaUser(user);

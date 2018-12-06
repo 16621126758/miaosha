@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * @Class: GlobleException
- * @description:
+ * @description:  全局异常拦截器
  * @Author: hongzhi.zhao
  * @Date: 2018-11-13 15:23
  */
@@ -22,6 +22,8 @@ import java.util.List;
 @ResponseBody
 public class GlobalExceptionHander {
 
+    //下面的注解是配置全局异常   也就是只要有异常就会走下面的方法，单使用@ExceptionHandler，只能在当前Controller中处理异常
+    //主要是Exception所以只要有了异常就会进入这个全局异常拦截器
     @ExceptionHandler(value = Exception.class)
     public Result<String> exceptionHandler(HttpServletRequest request,Exception exception){
         exception.printStackTrace();

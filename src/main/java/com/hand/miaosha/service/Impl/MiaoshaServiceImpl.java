@@ -43,7 +43,7 @@ public class MiaoshaServiceImpl implements MiaoshaService {
         //减少库存  下订单  写入秒杀订单
         boolean success = goodsService.reduceStock(goods);
         if (success){
-            //生成订单
+            //下订单，写入秒杀订单（生成订单）
             return orderService.createOrder(user,goods);
         }else {
            setGoodsOver(goods.getId());

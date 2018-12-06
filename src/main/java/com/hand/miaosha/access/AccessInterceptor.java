@@ -20,7 +20,7 @@ import java.io.OutputStream;
 
 /**
  * @Class: AccessInterceptor
- * @description:
+ * @description: 拦截器
  * @Author: hongzhi.zhao
  * @Date: 2018-11-26 10:19
  */
@@ -31,14 +31,19 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private RedisService redisService;
+
+
     @Override
+    //方法执行前做一个拦截
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod){
             MiaoshaUser miaoshaUser = getUser(request,response);
             UserContext.setUser(miaoshaUser);
 
             HandlerMethod hm = (HandlerMethod) handler;
+            //拿到注解
             AccessLimit accessLimit = hm.getMethodAnnotation(AccessLimit.class);
+            //如果没有获取到注解，那么就和森么也不做
             if (null == accessLimit){
                 return true;
             }

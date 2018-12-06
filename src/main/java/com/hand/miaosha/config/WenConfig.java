@@ -33,7 +33,8 @@ public class WenConfig extends WebMvcConfigurerAdapter
         super.addInterceptors(registry);
     }
 
-    //这个是往controller中赋值用的，比如httpresponse等
+    //这个是往controller中赋值用的，比如httpresponse等，springmvc方法中带很多参数，下面的方法是赋值用的，下面是获取controller参数中是否由MiaoUser
+    //如果由就设置导航
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(userArgumentResolver);
